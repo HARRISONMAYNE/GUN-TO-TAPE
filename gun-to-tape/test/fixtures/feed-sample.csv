@@ -1,0 +1,5 @@
+Event Name,Event Date,Event URL,Distance,Venue,Position,First Name,Last Name,Club,Category,Gender,Time,Bib,Status
+Test Fell Race,2026-10-10,https://example.org/results/test-fell,8k,Test Fell,1,Sam,Jones,"Hill, Dale & Moor AC",M40,M,31:05,12,
+Test Fell Race,2026-10-10,https://example.org/results/test-fell,8k,Test Fell,2,Ana,Müller,Valley RC,F,F,34:50,7,
+Test Fell Race,2026-10-10,https://example.org/results/test-fell,8k,Test Fell,,Lee,Late,,M,M,,99,DNF
+Test Fell Race,not-a-date,https://example.org/results/test-fell,8k,Test Fell,3,Bad,Row,,M,M,40:00,3,

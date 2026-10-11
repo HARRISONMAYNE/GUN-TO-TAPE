@@ -1,0 +1,6 @@
+{"data":{"id":"abcd1234efgh5678","event":{"id":115978,"uniqueCode":"abcd1234efgh5678","type":"running","name":"Fixture 10K","eventDate":"2026-10-10T23:30:00.000Z","timezone":"Europe/London","locality":"Woodbridge","administrativeArea":"England","countryCode":"GB","resultsUrl":"https://results.raceroster.com/v3/events/abcd1234efgh5678",
+"subEvents":[
+{"id":1,"name":"Fixture 10K","distanceType":"running","distanceLabel":"10 km","hasResults":true,"isPublic":true,"resultsType":"STRUCTURED","resultCount":4,"genderParticipantCount":{"M":3,"F":1}},
+{"id":2,"name":"Swim 1500","distanceType":"swimming","distanceLabel":"1500 m","hasResults":true,"isPublic":true,"resultsType":"STRUCTURED","resultCount":9,"genderParticipantCount":{"M":5,"F":4}},
+{"id":3,"name":"Hidden","distanceType":"running","distanceLabel":"5 km","hasResults":true,"isPublic":false,"resultsType":"STRUCTURED","resultCount":9,"genderParticipantCount":{}}
+]}}}

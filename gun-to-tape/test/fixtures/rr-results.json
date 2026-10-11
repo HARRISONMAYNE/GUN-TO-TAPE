@@ -1,0 +1,6 @@
+{"_id":1,"data":[
+{"id":"aaaa1111","overallPlace":1,"bib":"869","name":"Sample Racer A","gunTime":"31:57","chipTime":"31:56","teamName":"Fixture Harriers","division":"Open","divisionPlace":"1 / 3","genderPlace":"1 / 3"},
+{"id":"bbbb2222","overallPlace":2,"bib":"192","name":"Sample Racer B","gunTime":"32:37","chipTime":"32:36","teamName":"","division":"M 50-59","divisionPlace":"1 / 125","genderPlace":"2 / 3"},
+{"id":"cccc3333","overallPlace":3,"bib":"175","name":"Sample Racer C","gunTime":"37:06","chipTime":"37:05","teamName":"Pacers RC","division":"F 20-39","divisionPlace":"1 / 117","genderPlace":"1 / 1"},
+{"id":"dddd4444","overallPlace":4,"bib":"1","name":"","gunTime":"","chipTime":"","teamName":"","division":"","divisionPlace":"","genderPlace":""}
+],"meta":{"filteredResults":4,"totalResults":4}}

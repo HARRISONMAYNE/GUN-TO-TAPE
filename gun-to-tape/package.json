@@ -1,0 +1,15 @@
+{
+  "name": "gun-to-tape",
+  "version": "0.1.0",
+  "description": "Scrapers and database schema for Gun to Tape, a UK road and cross country results finder",
+  "type": "module",
+  "private": true,
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "test": "node --test \"test/*.test.js\"",
+    "scrape:racetec": "node src/run.js racetec"
+  },
+  "dependencies": {
+    "cheerio": "^1.1.2"
+  }
+}

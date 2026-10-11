@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Search UK road and cross country results by athlete, event or club, with a link to every organiser's official results.">
+<title>Gun to Tape</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sofia+Sans+Extra+Condensed:wght@700..900&family=Sofia+Sans:wght@400..800&display=swap">
+<style>
+:root{
+  --bg:#FFFFFF; --ink:#112A6B; --muted:#52608D; --line:#D9DFEF; --wash:#F0F3FB;
+  --panel:#1B3FA0; --panel-ink:#FFFFFF; --panel-dim:#BCC9F4; --red:#D2232A; --link:#1B3FA0; --focus:#1B3FA0; --err:#B3261E;
+  --d:'Sofia Sans Extra Condensed','Arial Narrow',Arial,sans-serif;
+  --b:'Sofia Sans','Helvetica Neue',Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0C1330; --ink:#E9EEFF; --muted:#9DABD8; --line:#243060; --wash:#141D45;
+  --panel:#1B3FA0; --red:#FF5A60; --link:#9DB4FF; --focus:#9DB4FF; --err:#FF8A80; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C1330; --ink:#E9EEFF; --muted:#9DABD8; --line:#243060; --wash:#141D45;
+  --panel:#1B3FA0; --red:#FF5A60; --link:#9DB4FF; --focus:#9DB4FF; --err:#FF8A80; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1.0625rem/1.55 var(--b);-webkit-text-size-adjust:100%}
+a{color:var(--link)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.side :focus-visible{outline-color:#fff}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{margin:0;text-wrap:balance}
+.shell{display:grid;grid-template-columns:minmax(300px,360px) minmax(0,1fr);min-height:100vh}
+.side{background:var(--panel);color:var(--panel-ink);border-right:8px solid var(--red);padding:28px 24px 28px 28px;display:flex;flex-direction:column;gap:26px;position:sticky;top:0;height:100vh;overflow-y:auto}
+.brand{color:inherit;text-decoration:none;font:900 3rem/.9 var(--d);letter-spacing:.005em}
+.tag{margin:-14px 0 0;color:var(--panel-dim);font-size:.98rem;max-width:26ch}
+.modes{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.modes button{background:none;border:0;border-left:4px solid transparent;padding:4px 0 4px 12px;margin-left:-16px;color:var(--panel-dim);font:700 1.5rem/1.2 var(--d);cursor:pointer;letter-spacing:.01em}
+.modes button:hover{color:#fff}
+.modes button[aria-selected="true"]{color:#fff;border-left-color:#fff}
+form#form{display:flex;flex-direction:column;gap:16px}
+.f{display:flex;flex-direction:column;gap:2px}
+.f label{color:var(--panel-dim);font-size:.9rem}
+.side input,.side select{width:100%;min-width:0;background:none;border:0;border-bottom:2px solid var(--panel-dim);border-radius:0;color:#fff;padding:8px 0;min-height:44px;font-size:1.15rem;appearance:none;-webkit-appearance:none}
+.side input::placeholder{color:var(--panel-dim)}
+.side input:focus,.side select:focus{outline:none;border-bottom-color:#fff}
+.side select{background-image:linear-gradient(45deg,transparent 50%,#fff 50%),linear-gradient(135deg,#fff 50%,transparent 50%);background-position:calc(100% - 14px) 55%,calc(100% - 9px) 55%;background-size:5px 5px;background-repeat:no-repeat;padding-right:28px;text-overflow:ellipsis}
+select option{color:#112A6B;background:#fff}
+.go{align-self:flex-start;border:0;background:#fff;color:#14308A;padding:0 22px;min-height:46px;border-radius:2px;font-weight:700;cursor:pointer}
+.go:hover{background:var(--panel-dim)}
+.surface{display:flex;flex-direction:column;align-items:flex-start;gap:2px;color:var(--panel-dim);font-size:.95rem}
+.surface button{background:none;border:0;padding:3px 0;color:#fff;cursor:pointer;opacity:.7;text-align:left;border-bottom:2px solid transparent}
+.surface button[aria-pressed="true"]{opacity:1;border-color:#fff;font-weight:700}
+.note{margin:0;color:var(--panel-dim);font-size:.9rem}
+.foot{margin-top:auto;display:flex;flex-direction:column;gap:6px}
+.foot a{color:var(--panel-dim);text-decoration:none;width:max-content;border-bottom:2px solid transparent}
+.foot a:hover{color:#fff}
+.foot a[aria-current="page"]{color:#fff;border-color:#fff}
+.main{padding:36px 40px 64px;min-width:0;max-width:1000px}
+.out h2,.title{font:800 clamp(2rem,4.2vw,3.1rem)/.98 var(--d);color:var(--ink)}
+.meta{color:var(--muted);margin:8px 0 0;max-width:70ch}
+.pbs{display:flex;gap:6px 24px;flex-wrap:wrap;margin:20px 0 4px}
+.pb{color:var(--muted)}
+.pb b{font:800 1.9rem/1 var(--d);color:var(--red);font-variant-numeric:tabular-nums;margin-right:6px}
+.list{margin:18px 0 0;padding:0;list-style:none;border-top:4px solid var(--panel)}
+.res{display:grid;grid-template-columns:3.4rem minmax(0,1fr) 6.2rem 8.5rem;gap:4px 16px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.pos{font:800 2.3rem/1 var(--d);font-variant-numeric:tabular-nums;color:var(--link)}
+.who{min-width:0}
+.who strong{display:block;font-weight:700;overflow-wrap:anywhere}
+.who span{display:block;color:var(--muted);font-size:.95rem;overflow-wrap:anywhere}
+.who .alt{color:var(--ink)}
+.time{font:800 2.1rem/1 var(--d);font-variant-numeric:tabular-nums;text-align:right;color:var(--red)}
+.off{justify-self:end;font-weight:600;font-size:.95rem}
+.off.dead{color:var(--muted);font-weight:400}
+.ev{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 16px;padding:16px 0;border:0;border-bottom:1px solid var(--line);align-items:center;width:100%;background:none;text-align:left;cursor:pointer}
+.ev:hover b{text-decoration:underline;text-decoration-color:var(--red);text-decoration-thickness:3px;text-underline-offset:4px}
+.ev b{font:800 1.75rem/1.05 var(--d);color:var(--ink)}
+.ev .n{color:var(--muted);font-variant-numeric:tabular-nums}
+.ev span{display:block}
+.grp{margin:32px 0 0;font:800 1.35rem/1.1 var(--d);color:var(--link)}
+.grp+.list{margin-top:6px}
+.empty{padding:24px 0;color:var(--muted)}
+.ghost{border:2px solid var(--panel);background:none;padding:8px 16px;border-radius:2px;cursor:pointer;font-weight:700;color:var(--link)}
+.ghost:hover{background:var(--wash)}
+.back{margin-bottom:22px}.more{margin-top:20px}
+.filters{display:flex;gap:14px;flex-wrap:wrap;margin-top:18px}
+.field{display:flex;flex-direction:column;gap:2px;flex:1 1 200px;min-width:0}
+.field.narrow{flex:0 1 150px}
+.field label{font-size:.92rem;color:var(--muted)}
+.main input,.main select,.main textarea{width:100%;min-width:0;padding:10px 0;border:0;border-bottom:2px solid var(--line);border-radius:0;background:none;min-height:44px}
+.main input:focus,.main select:focus,.main textarea:focus{outline:none;border-bottom-color:var(--panel)}
+.prose{max-width:64ch}
+.prose h1{font:900 clamp(2.6rem,6vw,4rem)/.95 var(--d);margin-bottom:20px}
+.prose h2{font:800 1.7rem/1.05 var(--d);margin:32px 0 8px;color:var(--link)}
+.prose ul{padding-left:20px}
+.prose .go{background:var(--panel);color:#fff}
+.prose .go:hover{background:var(--ink)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.ok{padding:12px 0;font-weight:600}
+.err{color:var(--err);font-weight:600;padding:12px 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (max-width:860px){
+  .shell{grid-template-columns:1fr}
+  .side{position:static;height:auto;border-right:0;border-bottom:8px solid var(--red);padding:22px 16px 24px}
+  .foot{margin-top:0;flex-direction:row;flex-wrap:wrap;gap:6px 20px}
+  .modes{flex-direction:row;gap:6px 18px;flex-wrap:wrap}
+  .modes button{margin-left:0;padding-left:0;border-left:0;border-bottom:4px solid transparent}
+  .modes button[aria-selected="true"]{border-bottom-color:#fff}
+  .main{padding:28px 16px 56px}
+  .res{grid-template-columns:2.6rem minmax(0,1fr) auto;grid-template-areas:"p w t" "p w o"}
+  .res .pos{grid-area:p;align-self:start;font-size:1.9rem}.res .who{grid-area:w}.res .time{grid-area:t}.res .off{grid-area:o}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <a class="brand" href="#home" aria-label="Gun to Tape, home">Gun to Tape</a>
+    <p class="tag">UK road and cross country results, each with a link to the organiser's own page.</p>
+    <div class="modes" role="tablist" aria-label="Search by">
+      <button role="tab" id="t-athlete" aria-selected="true" data-mode="athlete">By athlete</button>
+      <button role="tab" id="t-event" aria-selected="false" data-mode="event">By event</button>
+      <button role="tab" id="t-club" aria-selected="false" data-mode="club">By club</button>
+    </div>
+    <form id="form" autocomplete="off"></form>
+    <div class="surface" role="group" aria-label="Surface">
+      <button type="button" data-disc="" aria-pressed="true">Road and cross country</button>
+      <button type="button" data-disc="road" aria-pressed="false">Road only</button>
+      <button type="button" data-disc="xc" aria-pressed="false">Cross country only</button>
+    </div>
+    <p class="note" id="stats" aria-live="polite"></p>
+    <p class="note" id="banner" hidden></p>
+    <nav class="foot" aria-label="Site">
+      <a href="#home" data-nav="home">Results</a>
+      <a href="#privacy" data-nav="privacy">Privacy notice</a>
+      <a href="#remove" data-nav="remove">Remove my results</a>
+    </nav>
+  </aside>
+
+  <div class="main">
+    <main id="view-home"><section class="out" id="out" aria-live="polite"></section></main>
+
+    <main id="view-privacy" hidden class="prose">
+      <h1>Privacy notice</h1>
+      <p>Gun to Tape is an independent search tool for UK road and cross country results. No race organiser or timing company runs it or is affiliated with it.</p>
+      <h2>What we hold</h2>
+      <p>For each result: the athlete's name, club, age category, finishing position and time, race number, and a link to the page on the organiser's own results site. We hold no addresses, dates of birth, email addresses or payment details for athletes.</p>
+      <h2>Where it comes from</h2>
+      <p>Only from results that organisers and timing companies have already published, collected within each site's published rules (its robots.txt) and at a gentle pace, or supplied to us directly by the organiser or timing company. Where a site asks not to be collected, or needs a login we have not been given, we do not collect it.</p>
+      <h2>Why we hold it</h2>
+      <p>Our legitimate interest is helping athletes, clubs, coaches and commentators find published results in one place. The results are already public. We make them easier to find and always link to the original.</p>
+      <h2>Your rights</h2>
+      <ul>
+        <li>You can ask us to remove your results at any time, for any reason. Use the <a href="#remove">removal form</a>. We reply within 30 days, usually much sooner.</li>
+        <li>After removal, your name goes on a block list so your results do not come back when the site refreshes.</li>
+        <li>You can ask what we hold about you and ask us to correct it. Send corrections to a time or position to the organiser too, because the original is theirs.</li>
+        <li>If you are unhappy with how we handle your data, you can complain to the Information Commissioner's Office at ico.org.uk.</li>
+      </ul>
+      <h2>Cookies and tracking</h2>
+      <p>This site sets no cookies and runs no advertising or analytics trackers.</p>
+      <h2>Removal requests</h2>
+      <p>We use the name and email address you give on the removal form only to deal with your request and reply to you. We delete them once the request is complete, apart from the name on the block list.</p>
+    </main>
+
+    <main id="view-remove" hidden class="prose">
+      <h1>Remove my results</h1>
+      <p>Give your name exactly as it appears in the results, and an email address for our reply. We will remove every result under that name and stop it coming back.</p>
+      <form id="rm" style="display:grid;gap:18px;margin-top:24px">
+        <div class="field"><label for="rm-name">Full name as shown in the results</label><input id="rm-name" name="name" required maxlength="120"></div>
+        <div class="field"><label for="rm-contact">Email address for our reply</label><input id="rm-contact" name="contact" type="email" required maxlength="200"></div>
+        <div class="field"><label for="rm-details">Club, race or year, if it helps (optional)</label><textarea id="rm-details" name="details" rows="3" maxlength="1000"></textarea></div>
+        <div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
+        <div><button class="go" type="submit">Send removal request</button></div>
+        <div id="rm-msg" role="status"></div>
+      </form>
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+var $=function(s,r){return (r||document).querySelector(s)};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+var safeUrl=function(u){return /^https?:\/\//i.test(u||'')?u:''};
+var state={mode:'athlete',disc:'',live:null,dates:[]};
+
+/* ---------- sample data (used only when the live API is not reachable) ---------- */
+var SAMPLE=(function(){
+  var first=['Alex','Sam','Jordan','Priya','Callum','Megan','Tomasz','Aisha','Rhys','Ellie','Marcus','Hannah','Owen','Nia','Dev','Freya','Lewis','Imogen','Kofi','Ruth'];
+  var last=['Ashby','Brennan','Calder','Dunmore','Eastwood','Fairley','Garrow','Hollis','Ingram','Jessop','Kendrick','Lowther','Marlow','Nightingale','Oakes','Pemberton','Quill','Rowntree','Sheldon','Thorne'];
+  var clubs=['Moorland Harriers','Castle Park Runners','Riverside AC','Hillfoot Striders','Valley Road Runners','Northgate Joggers','Canalside RC','Ridgeway Harriers'];
+  var evs=[
+   ['s1','Castle Park 10k','10k','2026-10-11','Castle Park','road',10],
+   ['s2','Riverside Half Marathon','Half Marathon','2026-10-11','Riverside','road',13.1],
+   ['s3','Moorland Cross Country, Round 3','9k','2026-10-10','Moorland Country Park','xc',9],
+   ['s4','Hillfoot 5k Parkside Series','5k','2026-10-10','Hillfoot Rec','road',5],
+   ['s5','Canalside 10 Mile','10 Mile','2026-10-04','Canalside','road',16],
+   ['s6','Ridgeway Cross Country, Round 2','6k','2026-10-03','Ridgeway Farm','xc',6],
+   ['s7','Valley 5k Night Run','5k','2026-09-27','Valley Park','road',5]
+  ];
+  var seed=7;function rnd(){seed=(seed*16807)%2147483647;return seed/2147483647}
+  function fmt(sec){var h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=Math.floor(sec%60);return h?h+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0'):m+':'+String(s).padStart(2,'0')}
+  var events=[],results={};
+  evs.forEach(function(e){
+    var n=40+Math.floor(rnd()*30),pace=e[5]==='xc'?3.6:3.3,base=e[6]*pace*60,rows=[];
+    for(var i=0;i<n;i++){
+      var g=rnd()<.5?'M':'F',t=base*(1+i*.012+rnd()*.01)*(g==='F'?1.1:1);
+      var nm=first[Math.floor(rnd()*first.length)]+' '+last[Math.floor(rnd()*last.length)];
+      rows.push({id:e[0]+'-'+i,position:i+1,status:'finished',name:nm,club:clubs[Math.floor(rnd()*clubs.length)],category:(g==='M'?'M':'F')+(rnd()<.6?'':'35'),gender:g,time:fmt(t)});
+    }
+    events.push({id:e[0],raceName:e[1],distance:e[2],date:e[3],venue:e[4],discipline:e[5],finishers:n,officialUrl:''});
+    results[e[0]]=rows;
+  });
+  return {events:events,results:results};
+})();
+function sKey(s){return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9' -]+/g,' ').replace(/\s+/g,' ').trim()}
+function words(q){return sKey(q).split(' ').filter(Boolean)}
+function allWords(hay,q){var h=sKey(hay);return words(q).every(function(w){return h.indexOf(w)>=0})}
+function evById(id){return SAMPLE.events.filter(function(e){return e.id===id})[0]}
+function sampleApi(path,p){
+  var disc=p.discipline||'';
+  function flat(filter){var out=[];SAMPLE.events.forEach(function(e){if(disc&&e.discipline!==disc)return;SAMPLE.results[e.id].forEach(function(r){if(filter(r,e)){out.push(Object.assign({},r,{eventId:e.id,raceName:e.raceName,distance:e.distance,date:e.date,venue:e.venue,discipline:e.discipline,eventUrl:'',officialUrl:''}))}})});out.sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:a.position-b.position});return out}
+  if(path==='stats')return {events:SAMPLE.events.length,results:SAMPLE.events.reduce(function(a,e){return a+e.finishers},0),latest:'2026-10-11'};
+  if(path==='dates'){var m={};SAMPLE.events.forEach(function(e){if(disc&&e.discipline!==disc)return;var d=m[e.date]||(m[e.date]={date:e.date,events:0,road:0,xc:0,finishers:0});d.events++;d[e.discipline]=(d[e.discipline]||0)+1;d.finishers+=e.finishers});return {dates:Object.keys(m).sort().reverse().map(function(k){return m[k]})}}
+  if(path==='athletes'){var r=flat(function(r){return allWords(r.name,p.q)});return {q:p.q,count:r.length,results:r}}
+  if(path==='clubs'){var r2=flat(function(r,e){return allWords(r.club,p.q)&&(!p.date||e.date===p.date)&&(!p.from||e.date>=p.from)&&(!p.to||e.date<=p.to)});var nm={};r2.forEach(function(x){nm[x.club]=1});return {q:p.q,count:r2.length,clubNames:Object.keys(nm).sort(),results:r2}}
+  if(path==='events'){var ev=SAMPLE.events.filter(function(e){return (!disc||e.discipline===disc)&&(!p.date||e.date===p.date)&&(!p.from||e.date>=p.from)&&(!p.to||e.date<=p.to)&&(!p.q||allWords(e.raceName+' '+e.venue,p.q))});return {count:ev.length,events:ev}}
+  if(path.indexOf('events/')===0){var e=evById(decodeURIComponent(path.slice(7)));if(!e)return {error:'Event not found.'};var rows=SAMPLE.results[e.id].filter(function(r){return (!p.q||allWords(r.name,p.q))&&(!p.club||allWords(r.club,p.club))&&(!p.gender||r.gender===p.gender)});var off=+p.offset||0,lim=+p.limit||100;return {event:e,count:rows.slice(off,off+lim).length,results:rows.slice(off,off+lim),total:rows.length}}
+  return {error:'Not found.'};
+}
+function api(path,params){
+  params=params||{};
+  var qs=Object.keys(params).filter(function(k){return params[k]!==''&&params[k]!=null}).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(params[k])}).join('&');
+  if(state.live===false)return Promise.resolve(sampleApi(path,params));
+  var ctl=typeof AbortController==='function'?new AbortController():null;
+  var timer=ctl?setTimeout(function(){ctl.abort()},5000):null;
+  return fetch('api/'+path+(qs?'?'+qs:''),ctl?{signal:ctl.signal}:{}).then(function(r){
+    if(timer)clearTimeout(timer);
+    var ct=r.headers.get('content-type')||'';
+    if(!/json/.test(ct))throw new Error('not api');
+    return r.json().then(function(j){if(state.live!==true){state.live=true;banner()}return j});
+  }).catch(function(){
+    if(state.live===true)return {error:'The results service did not respond. Try again in a moment.'};
+    state.live=false;banner();return sampleApi(path,params);
+  });
+}
+function banner(){
+  var b=$('#banner');
+  if(state.live===false){b.hidden=false;b.textContent='These are made-up sample results so you can try the search. Real results appear once the site is connected to its database.'}
+  else b.hidden=true;
+}
+
+/* ---------- formatting ---------- */
+var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+function pd(iso){var a=iso.split('-');return new Date(Date.UTC(+a[0],+a[1]-1,+a[2]))}
+function fdate(iso){var d=pd(iso);return DOW[d.getUTCDay()]+' '+d.getUTCDate()+' '+MON[d.getUTCMonth()]+' '+d.getUTCFullYear()}
+function iso(d){return d.toISOString().slice(0,10)}
+function secs(t){var m=String(t||'').match(/^(?:(\d+):)?(\d+):(\d{2})/);return m?((+m[1]||0)*3600+(+m[2])*60+(+m[3])):null}
+function plural(n,w){return n+' '+w+(n===1?'':'s')}
+function tag(d){return d==='xc'?'Cross country':d==='road'?'Road':'Other'}
+function off(url){var u=safeUrl(url);return u?'<a class="off" href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">Official results<span class="sr"> on the organiser\'s site (opens in a new tab)</span></a>':'<span class="off dead">Sample</span>'}
+function posCell(r){return r.position!=null?'<div class="pos">'+esc(r.position)+'</div>':'<div class="pos" title="'+esc(r.status)+'">'+esc((r.status||'—').toUpperCase())+'</div>'}
+function bits(a){return a.filter(Boolean).join(', ')}
+function resRow(r,showEvent){
+  var l2=showEvent?bits([fdate(r.date),r.venue,r.distance&&r.distance!==r.raceName?r.distance:'',tag(r.discipline)]):bits([r.club,r.category]);
+  var l1=showEvent?r.raceName:r.name;
+  var l3=showEvent?bits([r.name,r.club,r.category]):'';
+  return '<li class="res">'+posCell(r)+'<div class="who"><strong>'+esc(l1)+'</strong><span>'+esc(l2)+'</span>'+(l3?'<span class="alt">'+esc(l3)+'</span>':'')+'</div><div class="time">'+esc(r.time||'\u2013')+'</div>'+off(r.officialUrl)+'</li>';
+}
+function say(html){$('#out').innerHTML=html}
+function busy(){say('<p class="empty">Searching…</p>')}
+function fail(j){say('<p class="empty">'+esc(j.error)+'</p>')}
+
+/* ---------- forms ---------- */
+function opt(v,l){return '<option value="'+esc(v)+'">'+esc(l)+'</option>'}
+function weekends(dates){
+  var map={},order=[];
+  dates.forEach(function(d){
+    var dt=pd(d.date),dow=dt.getUTCDay(),start=d.date,end=d.date;
+    if(dow===0){var s=new Date(dt.getTime()-864e5);start=iso(s);end=d.date}
+    else if(dow===6){start=d.date;end=iso(new Date(dt.getTime()+864e5))}
+    var k=start+'|'+end,w=map[k];
+    if(!w){w=map[k]={start:start,end:end,weekend:dow===0||dow===6,events:0};order.push(k)}
+    w.events+=d.events;
+  });
+  return order.map(function(k){return map[k]}).sort(function(a,b){return a.start<b.start?1:-1});
+}
+function weekendLabel(w){
+  if(!w.weekend)return fdate(w.start);
+  var a=pd(w.start),b=pd(w.end);
+  return 'Weekend '+a.getUTCDate()+(a.getUTCMonth()!==b.getUTCMonth()?' '+MON[a.getUTCMonth()]:'')+'–'+b.getUTCDate()+' '+MON[b.getUTCMonth()]+' '+b.getUTCFullYear();
+}
+function loadDates(){return api('dates',{discipline:state.disc}).then(function(j){state.dates=j.dates||[];return weekends(state.dates)})}
+function renderForm(){
+  var f=$('#form');
+  if(state.mode==='athlete'){
+    f.innerHTML='<div class="f"><label for="q">Athlete name</label><input id="q" name="q" type="search" placeholder="First name, surname or both" required minlength="2"></div><button class="go" type="submit">Search results</button>';
+  }else if(state.mode==='event'){
+    f.innerHTML='<div class="f"><label for="wk">Race weekend or date</label><select id="wk"><option value="">Loading dates</option></select></div><div class="f"><label for="q">Event name, if you know it</label><input id="q" name="q" type="search"></div><button class="go" type="submit">Show events</button>';
+    loadDates().then(function(w){
+      var s=$('#wk');if(!s)return;
+      s.innerHTML=opt('','Any date, newest first')+w.map(function(x){return opt(x.start+'|'+x.end,weekendLabel(x)+', '+plural(x.events,'event'))}).join('');
+      runEvents();
+    });
+  }else{
+    f.innerHTML='<div class="f"><label for="q">Club name</label><input id="q" name="q" type="search" placeholder="Part of the name is fine" required minlength="2"></div><div class="f"><label for="wk">Date</label><select id="wk"><option value="">Any date</option></select></div><button class="go" type="submit">Search club</button>';
+    loadDates().then(function(w){var s=$('#wk');if(!s)return;s.innerHTML=opt('','Any date')+w.map(function(x){return opt(x.start+'|'+x.end,weekendLabel(x))}).join('')});
+  }
+  var q=$('#q');if(q&&state.mode!=='event'&&window.innerWidth>860)q.focus();
+}
+function range(v){if(!v)return {};var a=v.split('|');return a[0]===a[1]?{date:a[0]}:{from:a[0],to:a[1]}}
+
+/* ---------- searches ---------- */
+function runAthlete(){
+  var q=$('#q').value.trim();if(sKey(q).length<2)return;busy();
+  api('athletes',{q:q,discipline:state.disc}).then(function(j){
+    if(j.error)return fail(j);
+    var rs=j.results||[];
+    if(!rs.length)return say('<p class="empty">No results for “'+esc(q)+'”. Try just the surname, or the spelling the organiser used.</p>');
+    var best={};
+    rs.forEach(function(r){var s=secs(r.time);if(s==null||r.position==null)return;var d=r.distance||r.raceName;if(!best[d]||s<best[d].s)best[d]={s:s,t:r.time}});
+    var pbs=Object.keys(best).slice(0,8).map(function(d){return '<div class="pb"><b>'+esc(best[d].t)+'</b> '+esc(d)+'</div>'}).join('');
+    say('<h2>'+esc(plural(rs.length,'result'))+' for “'+esc(q)+'”</h2><p class="meta">Newest first. Several people can share a name, so check the club and event.</p>'+(pbs?'<div class="pbs" aria-label="Fastest time per distance in these results">'+pbs+'</div>':'')+'<ul class="list">'+rs.map(function(r){return resRow(r,true)}).join('')+'</ul>');
+  });
+}
+function evList(es,title){
+  var byDate={},order=[];es.forEach(function(e){if(!byDate[e.date]){byDate[e.date]=[];order.push(e.date)}byDate[e.date].push(e)});
+  say((title?'<h2>'+esc(title)+'</h2>':'')+order.map(function(d){return '<h3 class="grp">'+esc(fdate(d))+'</h3><div class="list">'+byDate[d].map(function(e){return '<button class="ev" data-ev="'+esc(e.id)+'"><span><b>'+esc(e.raceName)+'</b><span class="meta">'+esc(bits([e.distance&&e.distance!==e.raceName?e.distance:'',e.venue,tag(e.discipline)]))+'</span></span><span class="n">'+(e.finishers!=null?esc(plural(e.finishers,'finisher')):'')+'</span></button>'}).join('')+'</div>'}).join(''));
+}
+function showLatest(){
+  api('events',{discipline:state.disc,limit:14}).then(function(j){
+    if(j.error||!(j.events||[]).length)return say('<h2>Find a result</h2><p class="meta">Search by athlete, event or club using the panel.</p>');
+    evList(j.events,'Latest races');
+  });
+}
+function runEvents(){
+  var wk=$('#wk'),q=$('#q');if(!wk)return;busy();
+  var p=Object.assign({q:q?q.value.trim():'',discipline:state.disc,limit:300},range(wk.value));
+  api('events',p).then(function(j){
+    if(j.error)return fail(j);
+    var es=j.events||[];
+    if(!es.length)return say('<p class="empty">No events found for that date and filter.</p>');
+    evList(es,null);
+  });
+}
+var evState={id:null,offset:0,total:0};
+function openEvent(id,reset){
+  if(reset){evState={id:id,offset:0};}
+  var q=($('#ev-q')||{}).value||'',club=($('#ev-club')||{}).value||'',g=($('#ev-g')||{}).value||'';
+  api('events/'+encodeURIComponent(id),{q:q,club:club,gender:g,limit:100,offset:evState.offset}).then(function(j){
+    if(j.error)return fail(j);
+    var e=j.event,rs=j.results||[];
+    var rows=rs.map(function(r){return resRow(r,false)}).join('')||'<li class="empty">No finishers match those filters.</li>';
+    if(evState.offset>0){$('#ev-list').insertAdjacentHTML('beforeend',rows);}
+    else{
+      say('<button class="ghost back" id="ev-back">Back to events</button><h2>'+esc(e.raceName)+'</h2><p class="meta">'+esc(bits([e.distance&&e.distance!==e.raceName?e.distance:'',fdate(e.date),e.venue,tag(e.discipline)]))+'. '+(safeUrl(e.officialUrl)?'<a href="'+esc(safeUrl(e.officialUrl))+'" target="_blank" rel="noopener noreferrer">Official results</a>':'Sample event.')+'</p>'+
+      '<div class="filters"><div class="field"><label for="ev-q">Athlete</label><input id="ev-q" type="search" value="'+esc(q)+'"></div><div class="field"><label for="ev-club">Club</label><input id="ev-club" type="search" value="'+esc(club)+'"></div><div class="field narrow"><label for="ev-g">Gender</label><select id="ev-g"><option value="">All</option><option value="M">Men</option><option value="F">Women</option></select></div></div><ul class="list" id="ev-list">'+rows+'</ul><div id="ev-more"></div>');
+      $('#ev-g').value=g;
+    }
+    $('#ev-more').innerHTML=rs.length>=100?'<button class="ghost more" id="ev-load">Show more</button>':'';
+  });
+}
+function runClub(){
+  var q=$('#q').value.trim();if(sKey(q).length<2)return;busy();
+  api('clubs',Object.assign({q:q,discipline:state.disc},range($('#wk').value))).then(function(j){
+    if(j.error)return fail(j);
+    var rs=j.results||[];
+    if(!rs.length)return say('<p class="empty">No club results found. Try a shorter club name, or another date.</p>');
+    var groups={},order=[];rs.forEach(function(r){if(!groups[r.eventId]){groups[r.eventId]=[];order.push(r.eventId)}groups[r.eventId].push(r)});
+    var names=(j.clubNames||[]).slice(0,6).join(', ');
+    say('<h2>'+esc(plural(rs.length,'result'))+' across '+esc(plural(order.length,'event'))+'</h2><p class="meta">Clubs matched: '+esc(names||'none')+'</p>'+order.map(function(id){var g=groups[id],e=g[0];return '<h3 class="grp">'+esc(bits([fdate(e.date),e.raceName,e.distance&&e.distance!==e.raceName?e.distance:'']))+'</h3><ul class="list">'+g.map(function(r){return resRow(r,false)}).join('')+'</ul>'}).join(''));
+  });
+}
+
+/* ---------- wiring ---------- */
+$$('.modes button').forEach(function(t){t.addEventListener('click',function(){
+  state.mode=t.dataset.mode;$$('.modes button').forEach(function(x){x.setAttribute('aria-selected',x===t?'true':'false')});showLatest();renderForm();
+})});
+$$('.surface button').forEach(function(b){b.addEventListener('click',function(){
+  state.disc=b.dataset.disc;$$('.surface button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});showLatest();renderForm();
+})});
+$('#form').addEventListener('submit',function(e){e.preventDefault();if(state.mode==='athlete')runAthlete();else if(state.mode==='event')runEvents();else runClub()});
+$('#form').addEventListener('change',function(e){if(e.target.id==='wk'&&state.mode==='event')runEvents()});
+$('#out').addEventListener('click',function(e){
+  var ev=e.target.closest('[data-ev]');if(ev){openEvent(ev.dataset.ev,true);window.scrollTo({top:$('#out').offsetTop-20});return}
+  if(e.target.id==='ev-back'){runEvents();return}
+  if(e.target.id==='ev-load'){evState.offset+=100;openEvent(evState.id,false)}
+});
+var tm;
+$('#out').addEventListener('input',function(e){
+  if(!/^ev-(q|club)$/.test(e.target.id))return;clearTimeout(tm);
+  var id=e.target.id,pos=e.target.selectionStart;
+  tm=setTimeout(function(){openEvent(evState.id,true);setTimeout(function(){var el=$('#'+id);if(el){el.focus();try{el.setSelectionRange(pos,pos)}catch(x){}}},250)},350);
+});
+$('#out').addEventListener('change',function(e){if(e.target.id==='ev-g')openEvent(evState.id,true)});
+
+$('#rm').addEventListener('submit',function(e){
+  e.preventDefault();
+  var f=e.target,msg=$('#rm-msg'),body={name:f.name.value,contact:f.contact.value,details:f.details.value,website:f.website.value};
+  msg.className='';msg.textContent='Sending…';
+  if(state.live===false){msg.className='err';msg.textContent='The site is not connected to its database yet, so this form cannot send. Please try again later.';return}
+  fetch('api/removal',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)})
+   .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j}})})
+   .then(function(x){
+     if(x.ok){f.reset();msg.className='ok';msg.textContent=x.j.message||'Request received.'}
+     else{msg.className='err';msg.textContent=x.j.error||'Could not send.'}
+   }).catch(function(){msg.className='err';msg.textContent='Could not reach the site. Please try again.'});
+});
+
+function route(){
+  var h=(location.hash||'#home').slice(1);if(['home','privacy','remove'].indexOf(h)<0)h='home';
+  ['home','privacy','remove'].forEach(function(v){$('#view-'+v).hidden=v!==h})
+  $$('[data-nav]').forEach(function(a){if(a.dataset.nav===h)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
+  document.title=h==='home'?'Gun to Tape':h==='privacy'?'Privacy notice, Gun to Tape':'Remove my results, Gun to Tape';
+}
+window.addEventListener('hashchange',function(){route();window.scrollTo(0,0)});
+route();renderForm();showLatest();
+api('stats').then(function(s){
+  if(!s||s.error)return;
+  var latest=s.latest?fdate(s.latest):'—';
+  $('#stats').textContent=Number(s.events||0).toLocaleString('en-GB')+' events and '+Number(s.results||0).toLocaleString('en-GB')+' results. Latest race: '+latest+'.';
+});
+})();
+</script>
+</body>
+</html>
